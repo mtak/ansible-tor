@@ -1,0 +1,78 @@
+---
+
+- name: Set HELO name
+  template:
+    src: exim4.conf.localmacros
+    dest: /etc/exim4/exim4.conf.localmacros
+  notify: reconfigure_exim4
+
+- name: Set /etc/aliases
+  template:
+    src: aliases
+    dest: /etc/aliases
+  notify: restart_exim4
+
+- name: Set Exim config
+  debconf: 
+    name: exim4-config
+    question: exim4/dc_other_hostnames
+    value: "{{ ansible_hostname }}"
+    vtype: string
+  notify: reconfigure_exim4
+
+- name: Set Exim config
+  debconf: 
+    name: exim4-config
+    question: 'mailname'
+    value: "{{ inventory_hostname }}"
+    vtype: string
+  notify: reconfigure_exim4
+
+- name: Set Exim config
+  debconf: 
+    name: exim4-config
+    question: 'exim4/mailname'
+    value: "{{ inventory_hostname }}"
+    vtype: string
+  notify: reconfigure_exim4
+
+- name: Set Exim config
+  debconf: 
+    name: exim4-config
+    question: 'exim4/use_split_config'
+    value: "false"
+    vtype: boolean
+  notify: reconfigure_exim4
+
+
+- name: Set Exim config
+  debconf: 
+    name: exim4-config
+    question: 'exim4/dc_minimaldns'
+    value: "false"
+    vtype: boolean
+  notify: reconfigure_exim4
+
+- name: Set Exim config
+  debconf: 
+    name: exim4-config
+    question: 'exim4/dc_eximconfig_configtype'
+    value: 'internet site; mail is sent and received directly using SMTP'
+    vtype: select
+  notify: reconfigure_exim4
+
+- name: Set Exim config
+  debconf: 
+    name: exim4-config
+    question: 'exim4/dc_localdelivery'
+    value: 'mbox format in /var/mail/'
+    vtype: select
+  notify: reconfigure_exim4
+
+- name: Set Exim config
+  debconf: 
+    name: exim4-config
+    question: 'exim4/dc_local_interfaces'
+    value: '127.0.0.1 ; ::1'
+    vtype: string
+  notify: reconfigure_exim4

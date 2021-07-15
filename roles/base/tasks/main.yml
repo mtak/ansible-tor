@@ -1,5 +1,19 @@
 ---
 
+- name: Fetch mail address
+  shell: pass show system/mail_notify
+  delegate_to: localhost
+  become: false
+  register: email_output
+  changed_when: false
+
+- name: Set mail address
+  set_fact:
+    mail_notify: "{{ email_output.stdout }}"
+
+- name: Set /etc/hosts
+  include_tasks: hosts.yml
+
 - name: Add CA
   include_tasks: ca-certificates.yml
 
@@ -11,3 +25,9 @@
 
 - name: Set alternatives
   include_tasks: alternatives.yml
+
+- name: Configure Exim
+  include_tasks: exim.yml
+
+- name: Unattended upgrades
+  include_tasks: unattended_upgrades.yml

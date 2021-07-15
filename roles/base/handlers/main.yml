@@ -6,3 +6,21 @@
 
 - name: update-ca-certificates
   command: /usr/sbin/update-ca-certificates
+
+- name: reconfigure_exim4
+  file: path={{ item }} state=absent
+  with_items:
+    - "/etc/exim4/update-exim4.conf.conf"
+    - "/etc/mailname"
+  notify: reconfigure_exim4_step2
+
+- name: reconfigure_exim4_step2
+  command: dpkg-reconfigure -fnoninteractive exim4-config
+
+- name: reconfigure_unattended_upgrades
+  command: dpkg-reconfigure -fnoninteractive unattended-upgrades
+
+- name: restart_exim4
+  systemd:
+    name: exim4
+    state: restarted
