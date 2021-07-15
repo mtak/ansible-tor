@@ -1,0 +1,21 @@
+---
+
+- name: Install node-exporter
+  apt:
+    name: prometheus-node-exporter
+    state: latest
+
+- name: Set node-exporter configuration
+  template:
+    src: prometheus-node-exporter
+    dest: /etc/default/prometheus-node-exporter
+    owner: root
+    group: root
+    mode: 0644
+  notify: restart_node_exporter
+
+- name: Start node-exporter
+  systemd:
+    name: prometheus-node-exporter
+    state: started
+    enabled: yes

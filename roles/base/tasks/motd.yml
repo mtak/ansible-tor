@@ -1,0 +1,8 @@
+---
+
+- name: Copy MOTD
+  template:
+    src: motd
+    dest: /etc/motd
+    mode: 0644
+

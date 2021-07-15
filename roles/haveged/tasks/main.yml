@@ -1,0 +1,12 @@
+---
+
+- name: Install haveged
+  apt:
+    name: "haveged"
+    state: latest
+
+- name: Enable haveged
+  systemd:
+    name: haveged
+    state: started
+    enabled: yes

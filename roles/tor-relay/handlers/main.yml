@@ -1,0 +1,6 @@
+---
+
+- name: restart_tor
+  systemd:
+    name: tor
+    state: restarted

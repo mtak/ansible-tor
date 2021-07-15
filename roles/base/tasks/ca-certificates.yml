@@ -1,0 +1,21 @@
+---
+
+- name: Create CA directory
+  file:
+    path: /usr/local/share/ca-certificates/mtakInternal/
+    state: directory
+    mode: 0755
+
+- name: Copy SSL root CA
+  copy:
+    src: mtakInternalCAG2.crt
+    dest: /usr/local/share/ca-certificates/mtakInternal/mtakInternalCAG2.crt
+    mode: 0644
+  notify: update ca
+
+- name: Copy SSL Services CA
+  copy:
+    src: mtakInternalCAG2Services.crt
+    dest: /usr/local/share/ca-certificates/mtakInternal/mtakInternalCAG2Services.crt
+    mode: 0644
+  notify: update ca

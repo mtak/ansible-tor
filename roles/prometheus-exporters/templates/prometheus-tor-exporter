@@ -1,0 +1,14 @@
+# usage: prometheus-tor-exporter.py [-h] [-a ADDRESS] [-c CONTROL_PORT]
+#                                   [-p LISTEN_PORT] [-b BIND_ADDR]
+# 
+# optional arguments:
+#   -h, --help            show this help message and exit
+#   -a ADDRESS, --address ADDRESS
+#                         Tor control IP address
+#   -c CONTROL_PORT, --control-port CONTROL_PORT
+#                         Tor control port
+#   -p LISTEN_PORT, --listen-port LISTEN_PORT
+#                         Listen on this port
+#   -b BIND_ADDR, --bind-addr BIND_ADDR
+#                         Bind this address
+ARGS="-b {{ ansible_default_ipv4.address }} -p 9099 -a 127.0.0.1 -c 9051"

@@ -1,0 +1,8 @@
+---
+
+- name: update ca
+  command: /usr/bin/c_rehash
+  notify: update-ca-certificates
+
+- name: update-ca-certificates
+  command: /usr/sbin/update-ca-certificates

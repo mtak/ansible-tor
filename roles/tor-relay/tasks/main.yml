@@ -1,0 +1,19 @@
+---
+
+- name: Write torrc
+  template:
+    src: torrc
+    dest: /etc/tor/torrc
+    owner: root
+    group: root
+    mode: 0644
+  notify: restart_tor
+    
+- name: Write dirFrontPage
+  template:
+    src: dirfrontpage.html
+    dest: /etc/tor/dirfrontpage.html
+    owner: root
+    group: root
+    mode: 0644
+  notify: restart_tor

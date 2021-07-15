@@ -1,0 +1,19 @@
+---
+
+- name: Install unbound
+  apt:
+    name: unbound
+    state: latest
+
+- name: Enable unbound
+  systemd:
+    name: unbound
+    state: started
+    enabled: yes
+
+- name: Set resolv.conf
+  copy:
+    src: resolv.conf
+    dest: /etc/resolv.conf
+    mode: 0444
+

@@ -1,0 +1,7 @@
+---
+
+- name: Set up node exporter
+  include_tasks: node-exporter.yml
+
+- name: Set up tor exporter
+  include_tasks: tor-exporter.yml

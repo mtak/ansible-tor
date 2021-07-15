@@ -1,0 +1,11 @@
+---
+
+- name: restart_node_exporter
+  systemd:
+    name: prometheus-node-exporter
+    state: restarted
+
+- name: restart_tor_exporter
+  systemd:
+    name: prometheus-tor-exporter
+    state: restarted

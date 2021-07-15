@@ -1,0 +1,10 @@
+[all-servers:children]
+tor-relay
+tor-exit
+
+[tor-relay]
+tor01.mtak.nl
+tor02.mtak.nl
+tor03.mtak.nl
+
+[tor-exit]

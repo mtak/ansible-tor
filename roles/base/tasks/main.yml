@@ -1,0 +1,13 @@
+---
+
+- name: Add CA
+  include_tasks: ca-certificates.yml
+
+- name: Set MOTD
+  include_tasks: motd.yml
+
+- name: Install packages
+  include_tasks: packages.yml
+
+- name: Set alternatives
+  include_tasks: alternatives.yml

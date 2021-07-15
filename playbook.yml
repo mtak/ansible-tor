@@ -1,0 +1,31 @@
+---
+
+- hosts: all-servers
+  roles:
+    - name: base
+      tags: [base]
+    - name: ssh
+      tags: [base, ssh]
+    - name: iptables
+      tags: [base, iptables]
+    - name: haveged
+      tags: [base, haveged]
+    - name: unbound
+      tags: [unbound]
+    - name: tor
+      tags: [tor]
+
+- hosts: tor-relay
+  roles:
+    - name: tor-relay
+      tags: [tor, tor-relay]
+
+#- hosts: tor-exit
+#  roles:
+#    - name: tor-exit
+#      tags: [tor, tor-exit]
+
+- hosts: all-servers
+  roles:
+    - name: prometheus-exporters
+      tags: [base, prometheus-exporters]

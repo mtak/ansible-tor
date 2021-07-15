@@ -1,0 +1,10 @@
+---
+
+base_packages:
+  - tcpdump
+  - iotop
+  - iftop
+  - vim
+  - curl
+  - sysstat
+  - iptables-persistent

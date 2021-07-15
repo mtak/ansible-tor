@@ -1,0 +1,5 @@
+---
+
+- name: reload_iptables
+  shell: /usr/sbin/iptables-restore < /etc/iptables.rules
+
