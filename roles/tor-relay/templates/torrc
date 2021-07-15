@@ -1,3 +1,6 @@
+{% set gb_per_day = ( ( tor_data_limit * 1024 / 31 ) * tor_data_fudge_factor ) | round | int %}
+{% set bandwidth_rate = ( ( gb_per_day * 1024**2 ) / 86400 ) | round | int %}
+{% set burst_rate = bandwidth_rate * 4 %}
 Nickname    {{ tor_nick }}
 ContactInfo tak.tor.operator@gmail.com
 MyFamily    {{ groups['all-servers'] | map('extract', hostvars, ['tor_nick']) | join(',') }}
@@ -17,7 +20,7 @@ ExitPolicy reject *:*
 
 # Bandwidth limit
 AccountingStart day 12:34
-AccountingMax 161 GBytes
-RelayBandwidthRate 1750 KBytes
-RelayBandwidthBurst 7000 KBytes
+AccountingMax {{ gb_per_day}} GBytes
+RelayBandwidthRate {{ bandwidth_rate }} KBytes
+RelayBandwidthBurst {{ burst_rate }} KBytes
 
