@@ -21,7 +21,7 @@
     name: deb.torproject.org-keyring
     state: latest
 
-- name: Install Tor
+- name: Install Tor and Nyx
   apt:
-    name: tor
+    name: [tor, nyx]
     state: latest
