@@ -1,0 +1,32 @@
+{% set gb_per_day = ( ( tor_data_limit * 1024 / 31 ) * tor_data_fudge_factor ) | round | int %}
+{% set bandwidth_rate = ( ( gb_per_day * 1024**2 ) / 86400 ) | round | int %}
+{% set burst_rate = bandwidth_rate * 4 %}
+Nickname    {{ tor_nick }}
+ContactInfo tak.tor.operator@gmail.com
+MyFamily    {{ groups['all-servers'] | map('extract', hostvars, ['tor_nick']) | join(',') }}
+ORPort      443
+DirPortFrontPage /etc/tor/dirfrontpage.html
+DirPort     80
+DirCache    1
+ExitRelay   1
+SocksPort   0
+Log notice  syslog
+
+ControlPort 9051
+#CookieAuthentication 1
+
+# Exit policy
+{% for host in tor_blocked_hosts %}
+ExitPolicy reject {{ host }}:*
+{% endfor %}
+{% for port in tor_exit_ports %}
+ExitPolicy accept *:{{ port }}
+{% endfor %}
+ExitPolicy reject *:*
+
+# Bandwidth limit
+AccountingStart day 12:34
+AccountingMax {{ gb_per_day}} GBytes
+RelayBandwidthRate {{ bandwidth_rate }} KBytes
+RelayBandwidthBurst {{ burst_rate }} KBytes
+

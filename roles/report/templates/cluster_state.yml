@@ -1,0 +1,14 @@
+{% for host in groups['tor-relay'] %}
+- name: {{ hostvars[host]['inventory_hostname'] }}:9099
+  location: {{  hostvars[host]['location'] }}
+  nick: {{ hostvars[host]['tor_nick'] }}
+  data_limit: {{ hostvars[host]['tor_data_limit'] }}
+  type: Relay
+{% endfor %}
+{% for host in groups['tor-exit'] %}
+- name: {{ hostvars[host]['inventory_hostname'] }}
+  location: {{  hostvars[host]['location'] }}
+  nick: {{ hostvars[host]['tor_nick'] }}
+  data_limit: {{ hostvars[host]['tor_data_limit'] }}
+  type: Exit
+{% endfor %}

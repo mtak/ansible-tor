@@ -1,0 +1,15 @@
+---
+
+- name: Write cluster state JSON
+  copy:
+    content: "{{ lookup('template', 'cluster_state.yml') | from_yaml | to_nice_json }}"
+    dest: cluster_state.json
+  delegate_to: localhost
+  become: false
+  changed_when: false
+
+- name: Copy to mgt4 for further processing
+  command: scp cluster_state.json mgt4.int.mtak.nl:tor/
+  delegate_to: localhost
+  become: false
+  changed_when: false

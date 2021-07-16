@@ -1,5 +1,14 @@
 ---
 
+#- hosts: all-servers
+#  tasks:
+#    - name: debug
+#      debug:
+#        msg: "{{ hostvars }}"
+#    - name: pause
+#      pause:
+#
+
 - hosts: all-servers
   roles:
     - name: base
@@ -20,12 +29,14 @@
     - name: tor-relay
       tags: [tor, tor-relay]
 
-#- hosts: tor-exit
-#  roles:
-#    - name: tor-exit
-#      tags: [tor, tor-exit]
+- hosts: tor-exit
+  roles:
+    - name: tor-exit
+      tags: [tor, tor-exit]
 
 - hosts: all-servers
   roles:
     - name: prometheus-exporters
       tags: [base, prometheus-exporters]
+    - name: report
+      tags: [report]

@@ -1,3 +1,11 @@
 ---
 
 tor_data_fudge_factor: 0.95
+
+tor_exit_ports:
+  - 53
+  - 80
+  - 443
+
+tor_blocked_hosts:
+  - 192.168.0.1
