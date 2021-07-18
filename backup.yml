@@ -1,0 +1,54 @@
+---
+
+- hosts: all-servers
+  tasks:
+    - name: Create local tmp dir
+      file:
+        path: /tmp/tor_keys
+        state: directory
+        mode: 0700
+      delegate_to: localhost
+      become: false
+      run_once: true
+
+    - name: Read ed25519_master_id_secret_key
+      fetch:
+        src: /var/lib/tor/keys/ed25519_master_id_secret_key
+        dest: /tmp/tor_keys/{{ inventory_hostname }}-ed25519_master_id_secret_key
+        flat: yes
+
+    - name: Read secret_id_key
+      fetch:
+        src: /var/lib/tor/keys/secret_id_key
+        dest: /tmp/tor_keys/{{ inventory_hostname }}-secret_id_key
+        flat: yes
+
+    - name: Bring password store up to date
+      command: pass git pull
+      delegate_to: localhost
+      become: false
+      run_once: true
+
+    - name: Insert ed25519_master_id_secret_key into password store
+      shell: cat /tmp/tor_keys/{{ inventory_hostname }}-ed25519_master_id_secret_key | base64 | pass insert -m -f system/{{ inventory_hostname }}-ed25519_master_id_secret_key
+      delegate_to: localhost
+      become: false
+
+    - name: Insert secret_id_key into password store
+      shell: cat /tmp/tor_keys/{{ inventory_hostname }}-secret_id_key | pass insert -m -f system/{{ inventory_hostname }}-secret_id_key
+      delegate_to: localhost
+      become: false
+
+    - name: Push password store
+      command: pass git push
+      delegate_to: localhost
+      become: false
+      run_once: true
+
+    - name: Delete local keys directory
+      file:
+        path: /tmp/tor_keys
+        state: absent
+      delegate_to: localhost
+      become: false
+      run_once: true
