@@ -1,0 +1,11 @@
+---
+
+- name: Get current timezone
+  shell: timedatectl show | awk -F '=' '/^Timezone=/{ print $2; }'
+  register: timezone
+  changed_when: false
+
+- name: Set timezone
+  shell: timedatectl set-timezone UTC
+  when:
+    timezone.stdout != 'UTC'
