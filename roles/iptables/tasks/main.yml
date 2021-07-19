@@ -8,3 +8,8 @@
     group: root
     mode: 0644
   notify: reload_iptables
+
+- name: Enable iptables-persistent
+  systemd:
+    name: netfilter-persistent
+    enabled: yes
