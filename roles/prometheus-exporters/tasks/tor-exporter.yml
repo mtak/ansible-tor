@@ -14,6 +14,17 @@
     mode: 0644
   notify: restart_tor_exporter
 
+- name: Change service parameters
+  template:
+    src: prometheus-tor-exporter.service
+    dest: /lib/systemd/system/prometheus-tor-exporter.service
+    owner: root
+    group: root
+    mode: 0644
+  notify: 
+    - reload_systemd
+    - restart_tor_exporter
+
 - name: Start tor-exporter
   systemd:
     name: prometheus-tor-exporter
