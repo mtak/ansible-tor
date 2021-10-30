@@ -1,6 +1,6 @@
 ---
 
-tor_data_fudge_factor: 0.95
+tor_data_fudge_factor: 0.9
 
 tor_exit_ports:
   - 53
