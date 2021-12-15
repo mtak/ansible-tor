@@ -9,3 +9,5 @@ tor_exit_ports:
 
 tor_blocked_hosts:
   - 192.168.0.1
+
+tor_metrics_port: 9098

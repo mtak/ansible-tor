@@ -1,0 +1,8 @@
+---
+
+- ansible.posix.sysctl:
+    name: net.ipv4.ip_local_port_range
+    value: '15000 64000'
+    state: present
+    sysctl_set: yes
+    reload: yes

@@ -3,6 +3,9 @@
 - name: Set timezone
   include_tasks: timezone.yml
 
+- name: Kernel options
+  include_tasks: sysctl.yml
+
 - name: Fetch mail address
   shell: pass show system/mail_notify
   delegate_to: localhost

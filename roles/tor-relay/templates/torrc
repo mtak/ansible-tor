@@ -11,6 +11,8 @@ DirCache    1
 ExitRelay   0
 SocksPort   0
 Log notice  syslog
+MetricsPort {{ tor_metrics_port }} prometheus
+MetricsPortPolicy accept *
 
 ControlPort 9051
 #CookieAuthentication 1
