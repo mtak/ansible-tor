@@ -7,7 +7,7 @@
   include_tasks: sysctl.yml
 
 - name: Fetch mail address
-  shell: pass show system/mail_notify
+  shell: rbw get --full --folder system mail_notify | tail -1
   delegate_to: localhost
   become: false
   register: email_output
