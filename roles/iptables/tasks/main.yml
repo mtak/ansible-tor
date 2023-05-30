@@ -1,9 +1,14 @@
 ---
 
+- name: Delete legacy iptables rules
+  file:
+    path: /etc/iptables.rules
+    state: absent
+
 - name: Set iptables rules
   template:
     src: iptables
-    dest: /etc/iptables.rules
+    dest: /etc/iptables/rules.v4
     owner: root
     group: root
     mode: 0644

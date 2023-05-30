@@ -1,5 +1,9 @@
 ---
 
 - name: reload_iptables
-  shell: /usr/sbin/iptables-restore < /etc/iptables.rules
+  systemd:
+    name: netfilter-persistent
+    state: restarted
+  #shell: /usr/sbin/iptables-restore < /etc/iptables.rules
+
 
