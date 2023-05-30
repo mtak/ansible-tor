@@ -26,3 +26,11 @@
     name: [tor, nyx]
     state: latest
     update-cache: yes
+
+- name: Write Nyx config
+  template:
+    src: nyxrc
+    dest: /root/.nyxrc
+    owner: root
+    group: root
+    mode: 0644

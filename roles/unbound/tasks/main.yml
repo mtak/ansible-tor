@@ -17,3 +17,9 @@
     dest: /etc/resolv.conf
     mode: 0444
 
+- name: Disable ipv6
+  copy:
+    src: disable-ipv6.conf
+    dest: /etc/unbound/unbound.conf.d/disable-ipv6.conf
+    mode: 0644
+  notify: restart_unbound
