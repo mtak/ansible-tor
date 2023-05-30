@@ -1,8 +1,8 @@
 ---
 
-- name: Install apt-transport-https
+- name: Install apt-transport-https and gpg
   apt:
-    name: apt-transport-https
+    name: [apt-transport-https, gpg, gpg-agent]
     state: latest
 
 - name: Add Tor repository key

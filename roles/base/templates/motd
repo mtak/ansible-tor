@@ -1,3 +1,3 @@
-Tor node {{ ansible_hostname }} - {{ location }}
+TakTor node {{ ansible_hostname }} - {{ location }}
 
 THIS IS A PRIVATE COMPUTER SYSTEM. Unauthorized access prohibited.

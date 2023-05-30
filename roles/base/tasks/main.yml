@@ -6,8 +6,11 @@
 - name: Kernel options
   include_tasks: sysctl.yml
 
+- name: Disable IPv6
+  include_tasks: ipv6.yml
+
 - name: Fetch mail address
-  shell: rbw get --full --folder system mail_notify | tail -1
+  shell: git log --format='%ae' HEAD | head -1
   delegate_to: localhost
   become: false
   register: email_output

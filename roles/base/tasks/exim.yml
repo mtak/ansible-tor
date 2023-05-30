@@ -1,5 +1,10 @@
 ---
 
+- name: Install exim
+  apt:
+    name: exim4-daemon-light
+    state: latest
+
 - name: Set HELO name
   template:
     src: exim4.conf.localmacros

@@ -11,3 +11,8 @@ tor_blocked_hosts:
   - 192.168.0.1
 
 tor_metrics_port: 9098
+
+# If data is unlimited:
+tor_bandwidth: 600       # in Mbit/s
+tor_bandwidth_burst: 800 # in Mbit/s
+

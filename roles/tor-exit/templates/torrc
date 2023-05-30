@@ -1,6 +1,11 @@
-{% set gb_per_day = ( ( tor_data_limit * 1024 / 31 ) * tor_data_fudge_factor ) | round | int %}
-{% set bandwidth_rate = ( ( gb_per_day * 1024**2 ) / 86400 ) | round | int %}
-{% set burst_rate = bandwidth_rate * 4 %}
+{% if tor_data_limit != 0 %}
+{%   set gb_per_day = ( ( tor_data_limit * 1024 / 31 ) * tor_data_fudge_factor ) | round | int %}
+{%   set bandwidth_rate = ( ( gb_per_day * 1024**2 ) / 86400 ) | round | int %}
+{%   set burst_rate = bandwidth_rate * 4 %}
+{% else %}
+{%   set bandwidth_rate = ( tor_bandwidth / 8 * 1024 ) | round | int %}
+{%   set burst_rate = ( tor_bandwidth_burst / 8 * 1024 ) | round | int %}
+{% endif %}
 Nickname    {{ tor_nick }}
 ContactInfo tak.tor.operator@gmail.com
 MyFamily    {{ groups['all-servers'] | map('extract', hostvars, ['tor_nick']) | join(',') }}
@@ -27,8 +32,10 @@ ExitPolicy accept *:{{ port }}
 ExitPolicy reject *:*
 
 # Bandwidth limit
+{% if tor_data_limit != 0 %}
 AccountingStart day 12:34
 AccountingMax {{ gb_per_day}} GBytes
+{% endif %}
 RelayBandwidthRate {{ bandwidth_rate }} KBytes
 RelayBandwidthBurst {{ burst_rate }} KBytes
 
