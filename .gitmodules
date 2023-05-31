@@ -1,0 +1,4 @@
+[submodule "ansible-tor-backup"]
+	path = ansible-tor-backup
+	url = git@github.com:mtak/ansible-tor-backup.git
+	branch = main

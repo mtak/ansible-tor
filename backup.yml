@@ -1,6 +1,6 @@
 ---
 
-- hosts: all-servers
+- hosts: localhost
   tasks:
     - name: Create local tmp dir
       file:
@@ -11,6 +11,15 @@
       become: false
       run_once: true
 
+    - name: Update backup repo
+      command: git submodule update --remote
+      delegate_to: localhost
+      become: false
+      run_once: true
+
+
+- hosts: all-servers
+  tasks:
     - name: Read ed25519_master_id_secret_key
       fetch:
         src: /var/lib/tor/keys/ed25519_master_id_secret_key
@@ -23,24 +32,46 @@
         dest: /tmp/tor_keys/{{ inventory_hostname }}-secret_id_key
         flat: yes
 
-    - name: Bring password store up to date
-      command: pass git pull
-      delegate_to: localhost
-      become: false
-      run_once: true
-
     - name: Insert ed25519_master_id_secret_key into password store
-      shell: cat /tmp/tor_keys/{{ inventory_hostname }}-ed25519_master_id_secret_key | base64 | pass insert -m -f system/{{ inventory_hostname }}-ed25519_master_id_secret_key
+      shell: |
+        age -R ~/.ssh/id_ed25519.pub /tmp/tor_keys/{{ inventory_hostname }}-ed25519_master_id_secret_key > ansible-tor-backup/tor/{{ inventory_hostname }}-ed25519_master_id_secret_key.age
       delegate_to: localhost
       become: false
 
     - name: Insert secret_id_key into password store
-      shell: cat /tmp/tor_keys/{{ inventory_hostname }}-secret_id_key | pass insert -m -f system/{{ inventory_hostname }}-secret_id_key
+      shell: |
+        age -R ~/.ssh/id_ed25519.pub /tmp/tor_keys/{{ inventory_hostname }}-secret_id_key > ansible-tor-backup/tor/{{ inventory_hostname }}-secret_id_key.age
       delegate_to: localhost
       become: false
 
-    - name: Push password store
-      command: pass git push
+- hosts: localhost
+  tasks:
+    - name: Stage backup repo
+      command: 
+        cmd: git add .
+        chdir: ansible-tor-backup
+      delegate_to: localhost
+      become: false
+      run_once: true
+
+    - name: Commit backup repo
+      command: 
+        cmd: git commit -m "Automated backup {{ ansible_date_time.iso8601 }}"
+        chdir: ansible-tor-backup
+      delegate_to: localhost
+      become: false
+      run_once: true
+
+    - name: Push backup repo
+      command: 
+        cmd: git push origin HEAD:main
+        chdir: ansible-tor-backup
+      delegate_to: localhost
+      become: false
+      run_once: true
+
+    - name: Refresh submodule
+      command: git submodule update --remote
       delegate_to: localhost
       become: false
       run_once: true

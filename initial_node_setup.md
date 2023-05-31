@@ -4,6 +4,12 @@ TakTor is designed to be used on cheap VPS'es. This document outlines a
 step-by-step plan to get a new Debian 10 VPS to a state where it can be used
 with Ansible.
 
+## Initialize git submodule for key backups
+
+```shell
+git submodule add -b main git@github.com:mtak/ansible-tor-backup.git
+```
+
 ## Steps
 
 ```shell
