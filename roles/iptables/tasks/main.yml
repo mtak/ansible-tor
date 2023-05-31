@@ -5,6 +5,10 @@
     path: /etc/iptables.rules
     state: absent
 
+- name: Set IPv4 control
+  set_fact:
+    control_ip: "{{ control_ipv4 }}"
+
 - name: Set iptables rules
   template:
     src: iptables
@@ -14,7 +18,23 @@
     mode: 0644
   notify: reload_iptables
 
+- name: Set IPv6 control
+  set_fact:
+    control_ip: "{{ control_ipv6 }}"
+
+- name: Set ip6tables rules
+  template:
+    src: iptables
+    dest: /etc/iptables/rules.v6
+    owner: root
+    group: root
+    mode: 0644
+  notify: reload_iptables
+
 - name: Enable iptables-persistent
   systemd:
     name: netfilter-persistent
     enabled: yes
+
+- name: Apply iptables immediately
+  meta: flush_handlers

@@ -5,12 +5,6 @@
     name: unbound
     state: latest
 
-- name: Enable unbound
-  systemd:
-    name: unbound
-    state: started
-    enabled: yes
-
 - name: Set resolv.conf
   copy:
     src: resolv.conf
@@ -23,3 +17,18 @@
     dest: /etc/unbound/unbound.conf.d/disable-ipv6.conf
     mode: 0644
   notify: restart_unbound
+  when: ipv6_disabled|default(true)
+
+- name: Enable ipv6
+  file:
+    path: /etc/unbound/unbound.conf.d/disable-ipv6.conf
+    state: absent
+  notify: restart_unbound
+  when: not (ipv6_disabled|default(true))
+
+- name: Enable unbound
+  systemd:
+    name: unbound
+    state: started
+    enabled: yes
+
