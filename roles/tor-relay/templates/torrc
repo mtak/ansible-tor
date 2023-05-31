@@ -7,7 +7,7 @@
 {%   set burst_rate = ( tor_bandwidth_burst / 8 * 1024 ) | round | int %}
 {% endif %}
 Nickname    {{ tor_nick }}
-ContactInfo tak.tor.operator@gmail.com
+ContactInfo ContactInfo email:tak.tor.operator[]gmail.com url:https://tak.io/ keybase:mtak ciissversion:2
 MyFamily    {{ groups['all-servers'] | map('extract', hostvars, ['tor_nick']) | join(',') }}
 ORPort      443
 DirPortFrontPage /etc/tor/dirfrontpage.html
