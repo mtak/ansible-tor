@@ -11,6 +11,35 @@
     dest: /etc/resolv.conf
     mode: 0444
 
+- name: Copy unbound-control-setup
+  copy:
+    src: unbound-control-setup
+    dest: /etc/unbound/unbound-control-setup
+    mode: 0744
+
+- name: Check if keys are already generated
+  stat:
+    path: /etc/unbound/unbound_ca_ec.key
+  register: unbound_ca_file
+
+- name: Generate keys if not exist
+  command: /etc/unbound/unbound-control-setup
+  when: not unbound_ca_file.stat.exists
+
+- name: Enable control for exporter
+  copy:
+    src: control.conf
+    dest: /etc/unbound/unbound.conf.d/control.conf
+    mode: 0644
+  notify: restart_unbound
+
+- name: Enable stats for exporter
+  copy:
+    src: extended-stats.conf
+    dest: /etc/unbound/unbound.conf.d/extended-stats.conf
+    mode: 0644
+  notify: restart_unbound
+
 - name: Disable ipv6
   copy:
     src: disable-ipv6.conf

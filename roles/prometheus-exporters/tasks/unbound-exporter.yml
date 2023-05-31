@@ -1,0 +1,23 @@
+---
+
+- name: Install unbound-exporter
+  apt:
+    deb: https://github.com/letsencrypt/unbound_exporter/releases/download/v0.4.1/unbound_exporter-v0.4.1.x86_64.deb
+    state: present
+
+- name: Change service parameters
+  template:
+    src: prometheus-unbound-exporter.service
+    dest: /lib/systemd/system/prometheus-unbound-exporter.service
+    owner: root
+    group: root
+    mode: 0644
+  notify: 
+    - reload_systemd
+    - restart_unbound_exporter
+
+- name: Start unbound-exporter
+  systemd:
+    name: prometheus-unbound-exporter
+    state: started
+    enabled: yes

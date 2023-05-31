@@ -20,5 +20,6 @@ COMMIT
 -A INPUT -s {{ control_ip }} -p tcp --dport {{ tor_metrics_port }} -j ACCEPT
 -A INPUT -s {{ control_ip }} -p tcp --dport 9099 -j ACCEPT
 -A INPUT -s {{ control_ip }} -p tcp --dport 9100 -j ACCEPT
+-A INPUT -s {{ control_ip }} -p tcp --dport 9167 -j ACCEPT
 -A INPUT -i lo -j ACCEPT
 COMMIT
