@@ -27,10 +27,15 @@
     state: latest
     update-cache: yes
 
+- name: Create Nyx config dir
+  file:
+    path: /root/.nyx
+    state: directory
+
 - name: Write Nyx config
   template:
     src: nyxrc
-    dest: /root/.nyxrc
+    dest: /root/.nyx/config
     owner: root
     group: root
     mode: 0644
