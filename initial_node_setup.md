@@ -12,6 +12,8 @@ git submodule add -b main git@github.com:mtak/ansible-tor-backup.git
 
 ## Steps
 
+### Prepare node
+
 ```shell
 passwd
 
@@ -30,3 +32,11 @@ cat <<EOF >>/etc/sudoers
 mtak	ALL=(ALL) NOPASSWD: ALL
 EOF
 ```
+
+### Deploy
+
+### Add tor fingerprint
+
+- Add tor fingerprint to `host_vars/**`
+
+- Run Ansible again

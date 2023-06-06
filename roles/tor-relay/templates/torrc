@@ -8,8 +8,12 @@
 {% endif %}
 Nickname    {{ tor_nick }}
 ContactInfo ContactInfo email:tak.tor.operator[]gmail.com url:https://tak.io/ keybase:mtak ciissversion:2
-MyFamily    {{ groups['all-servers'] | map('extract', hostvars, ['tor_nick']) | join(',') }}
+MyFamily    {{ groups['all-servers'] | map('extract', hostvars, ['tor_fingerprint']) | join(',') }}
+{% if ipv6_disabled|default(true) %}
+ORPort      443 IPv4Only
+{% else %}
 ORPort      443
+{% endif %}
 DirPortFrontPage /etc/tor/dirfrontpage.html
 DirPort     80
 DirCache    1
