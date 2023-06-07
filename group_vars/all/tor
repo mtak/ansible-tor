@@ -2,10 +2,18 @@
 
 tor_data_fudge_factor: 0.9
 
+# 993 IMAPS
+# 995 POP3S
+# 1194 OpenVPN
+# 11371 OpenPGP HKP
 tor_exit_ports:
   - 53
   - 80
   - 443
+  - 993
+  - 995
+  - 1194
+  - 11371
 
 tor_blocked_hosts:
   - 192.168.0.1
