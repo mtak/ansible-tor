@@ -36,6 +36,13 @@ Unattended-Upgrade::Origins-Pattern {
 //      "origin=Debian,codename=${distro_codename}-proposed-updates";
         "origin=Debian,codename=${distro_codename},label=Debian";
         "origin=Debian,codename=${distro_codename},label=Debian-Security";
+        // Debian security moved to a separate codename (e.g. bookworm-security).
+        // Keep the preceding pattern for older Debian releases.
+        "origin=Debian,codename=${distro_codename}-security,label=Debian-Security";
+        // Allow stable point updates, but not proposed-updates or backports.
+        "origin=Debian,codename=${distro_codename}-updates,label=Debian";
+        // Official Tor Project packages for this configured distribution.
+        "origin=TorProject";
 
         // Archive or Suite based matching:
         // Note that this will silently match a different release after
@@ -124,7 +131,7 @@ Unattended-Upgrade::Automatic-Reboot-WithUsers "true";
 // If automatic reboot is enabled and needed, reboot at the specific
 // time instead of immediately
 //  Default: "now"
-//Unattended-Upgrade::Automatic-Reboot-Time "02:00";
+Unattended-Upgrade::Automatic-Reboot-Time "04:00";
 
 // Use apt bandwidth limit feature, this example limits the download
 // speed to 70kb/sec
