@@ -5,16 +5,57 @@
     name: [apt-transport-https, gpg, gpg-agent]
     state: latest
 
-- name: Add Tor repository key
-  apt_key:
-    url: https://deb.torproject.org/torproject.org/A3C4F0F979CAA22CDBA8F512EE8CBC9E886DDD89.asc
-    state: present
+- name: Create the apt keyring directory
+  file:
+    path: /usr/share/keyrings
+    state: directory
+    owner: root
+    group: root
+    mode: 0755
+
+- name: Check for the Tor repository keyring
+  stat:
+    path: /usr/share/keyrings/deb.torproject.org-keyring.gpg
+  register: tor_repository_keyring
+
+- name: Download the Tor repository signing key
+  get_url:
+    url: >-
+      https://deb.torproject.org/torproject.org/A3C4F0F979CAA22CDBA8F512EE8CBC9E886DDD89.asc
+    dest: /usr/share/keyrings/deb.torproject.org.asc
+    owner: root
+    group: root
+    mode: 0644
+  register: tor_repository_signing_key
+
+- name: Convert the Tor repository key to a scoped keyring
+  command:
+    cmd: >-
+      gpg --dearmor --yes --output
+      /usr/share/keyrings/deb.torproject.org-keyring.gpg
+      /usr/share/keyrings/deb.torproject.org.asc
+  when: >-
+    tor_repository_signing_key.changed or
+    not tor_repository_keyring.stat.exists
+
+- name: Set readable permissions on the Tor repository keyring
+  file:
+    path: /usr/share/keyrings/deb.torproject.org-keyring.gpg
+    owner: root
+    group: root
+    mode: 0644
 
 - name: Add Tor repository
-  apt_repository:
-    repo: deb https://deb.torproject.org/torproject.org buster main
-    state: present
-    update_cache: yes
+  template:
+    src: tor.sources
+    dest: /etc/apt/sources.list.d/tor.sources
+    owner: root
+    group: root
+    mode: 0644
+
+- name: Update apt cache with the Tor repository
+  apt:
+    update_cache: true
 
 - name: Install Tor keyring
   apt:
@@ -25,7 +66,7 @@
   apt:
     name: [tor, nyx]
     state: latest
-    update-cache: yes
+    update_cache: true
 
 - name: Create Nyx config dir
   file:
