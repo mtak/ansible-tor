@@ -32,6 +32,11 @@ Components in this setup are:
 - Nyx is a terminal based control application for the Tor daemon. It's mostly there
   for just-in-case scenarios. Day to day monitoring is generally done with Prometheus. 
 
+## Running Ansible
+
+See [the Ansible runbook](ANSIBLE_RUNBOOK.md) for inventory, connectivity checks,
+controller environment workarounds, and the latest recorded node baseline.
+
 ## Contributing
 
 This code is mainly available for reference and transparency. External pull

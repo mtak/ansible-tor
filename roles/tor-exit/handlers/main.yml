@@ -2,5 +2,5 @@
 
 - name: restart_tor
   systemd:
-    name: tor
+    name: tor@default
     state: restarted
