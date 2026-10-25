@@ -14,8 +14,6 @@ ORPort      443 IPv4Only
 {% else %}
 ORPort      443
 {% endif %}
-DirPortFrontPage /etc/tor/dirfrontpage.html
-DirPort     80
 DirCache    1
 ExitRelay   0
 SocksPort   0
