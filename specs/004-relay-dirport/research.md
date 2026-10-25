@@ -4,16 +4,20 @@ Date: 2026-10-25
 
 ## Decision
 
-Remove `DirPort 80` from both relay configurations and remove the matching inbound
-TCP/80 firewall rule. Keep `DirCache 1` and `ORPort 443`. Tor clients access
-directory caches over the relay ORPort by default; publishing a separate
-directory port provides no identified operational need for these relays.
+Keep `DirPort 80` and `DirPortFrontPage` on both relay types, and keep inbound
+TCP/80 open in the shared firewall. The operator wants to maintain the relay
+and exit notice pages. Tor's built-in front-page feature serves these pages
+without adding a separate HTTP daemon, keeping the attack surface smaller than
+installing another network service.
 
-The configured DirPort front page is an exit notice served specifically by the
-DirPort. Because the project has no other web server or HTTP service configured
-on the relays, keeping the notice would require retaining a deprecated listener
-or adding a separate service. The current configuration provides no evidence
-that this notice is relied on, so this change removes it along with DirPort.
+`DirPort` is deprecated for directory service and Tor clients access directory
+caches over `ORPort` by default. Its continued use here is limited to the
+documented HTTP notice page. Keep `DirCache 1` and `ORPort 443` as before.
+
+An alternative daemon was considered and rejected: Ubuntu's security tracker
+marks `micro-httpd` vulnerable to CVE-2014-4927, a remotely triggerable buffer
+overflow, including in supported Ubuntu releases. It is not an appropriate
+replacement for an internet-facing listener.
 
 ## Evidence
 
@@ -25,6 +29,8 @@ that this notice is relied on, so this change removes it along with DirPort.
   display an exit notice on TCP/80, and explicitly says DirPort is deprecated
   since Tor 0.4.6.5:
   <https://community.torproject.org/relay/setup/exit/>
+- Ubuntu's security tracker marks `micro-httpd` vulnerable to CVE-2014-4927:
+  <https://ubuntu.com/security/CVE-2014-4927>
 - In this repository, both relay templates set `DirPort 80` and
   `DirCache 1`; the shared iptables template accepts inbound TCP/80. There is
   no separate web server role or other HTTP listener configured.
@@ -32,8 +38,8 @@ that this notice is relied on, so this change removes it along with DirPort.
 ## Scope and validation boundary
 
 This decision is based on current Tor documentation and repository
-configuration. The deployed Tor version and live traffic on TCP/80 were not
-available for this investigation. Tor release notes state that since 0.4.6.1,
-non-authoritative relays do not publish DirPort but still listen on it; this
-does not create a continuing directory-service need. Deployment should be
-followed by confirming that Tor restarts successfully and TCP/80 is closed.
+configuration. The deployed Tor version and live listener state were not
+available for this investigation. Tor's current exit guide still documents
+DirPortFrontPage for exit notices while noting DirPort deprecation. Deployment
+should confirm Tor restarts successfully and that the notice is served on
+TCP/80 for both relay types.

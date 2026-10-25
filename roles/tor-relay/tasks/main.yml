@@ -9,10 +9,14 @@
     mode: 0644
   notify: restart_tor
 
-- name: Remove obsolete DirPort front page
-  file:
-    path: /etc/tor/dirfrontpage.html
-    state: absent
+- name: Write dirFrontPage
+  template:
+    src: dirfrontpage.html
+    dest: /etc/tor/dirfrontpage.html
+    owner: root
+    group: root
+    mode: 0644
+  notify: restart_tor
 
 - name: Enable tor
   systemd:
