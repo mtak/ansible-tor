@@ -43,6 +43,7 @@
     src: control.conf
     dest: /etc/unbound/unbound.conf.d/control.conf
     mode: 0644
+    validate: unbound-checkconf %s
   notify: restart_unbound
 
 - name: Enable stats for exporter
