@@ -62,7 +62,7 @@ As a maintainer, I need the access rules and authorized monitoring sources docum
 
 - **FR-001**: Tor control access MUST be limited to the local node through localhost or a local socket.
 - **FR-002**: Tor control access MUST require authentication; unauthenticated or invalidly authenticated requests MUST be rejected.
-- **FR-003**: Tor metrics access MUST be limited to the configured Prometheus scraper source addresses.
+- **FR-003**: Tor's native metrics listener MUST be limited to the deployment's authorized Prometheus scraper source addresses.
 - **FR-004**: Requests for Tor metrics from sources outside the configured allowlist MUST be denied.
 - **FR-005**: The authorized Tor exporter MUST continue to authenticate to the control interface and collect the information it requires.
 - **FR-006**: Nyx running locally for an authorized operator MUST continue to authenticate to the control interface and provide its Tor inspection and management functions.
@@ -89,6 +89,7 @@ As a maintainer, I need the access rules and authorized monitoring sources docum
 
 - The existing Prometheus Tor exporter is the authorized local control client and must retain the access it needs.
 - Nyx is an authorized local administrative control client and must retain the access it needs for Tor inspection and management.
-- The set of permitted metrics sources is determined by the deployment's existing Prometheus scrape configuration and inventory; this feature documents and restricts to that set.
+- The existing `control_ip` source allowlist identifies authorized remote sources for native Tor metrics; Tor's MetricsPort policy will be aligned with it.
+- The existing firewall rule already limits remote access to ports 9098 and 9099 to `control_ip`; the exporter HTTP scrape endpoint on port 9099 remains unchanged.
 - The policy applies consistently to all managed Tor relay and exit nodes.
 - Routine deployment and service recovery continue to be performed through the repository's existing Ansible-managed configuration.
