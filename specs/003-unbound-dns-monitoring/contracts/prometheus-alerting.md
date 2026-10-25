@@ -13,6 +13,10 @@ The repository provides node-side Unbound statistics and a canonical rule file f
 
 The alert definition must use stable per-node target labels supplied by the external scrape configuration. The implementation must verify the actual label name/value before composing the final expression. It must not add labels for DNS names, client addresses, or individual queries.
 
+## Deployment Inputs to Confirm
+
+This repository has no Prometheus scrape configuration or monitoring-owner contact details. The active exit inventory host is `tor03.mtak.nl`. The rule bundle currently assumes the external scrape target uses `instance="tor03.mtak.nl:9167"` (the Unbound exporter default endpoint); the monitoring owner must confirm or replace this selector before importing the rules. The external rule-import path and notification receiver are also outside this repository and remain operator-owned. No recent SERVFAIL series or baseline is available in this checkout, so the initial threshold in the rule bundle is provisional and must be reviewed against the service's observed data before production use.
+
 ## Alert Behavior
 
 1. Fire a per-node resolver-failure alert when the configured SERVFAIL threshold remains exceeded continuously for more than one hour. In Prometheus terms, use an alert pending duration of one hour and allow the next rule evaluation to transition it to firing.

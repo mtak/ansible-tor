@@ -68,3 +68,10 @@ Import the canonical rule file into the existing external Prometheus service and
 - The alert identifies the exit node and resolver failure signal, and does not describe SERVFAIL as a proven upstream timeout.
 
 The external Prometheus service's alert receiver must remain its existing configured notification path.
+
+The rule file currently assumes `instance="tor03.mtak.nl:9167"` and an initial
+SERVFAIL threshold of `0.1` responses/second. The checkout contains no scrape
+configuration or observed baseline, so have the monitoring owner confirm the
+selector and review the threshold against actual aggregate series before import.
+The rule-import path and receiver are owned by that external service. Do not
+interpret SERVFAIL as proof of an upstream timeout.
