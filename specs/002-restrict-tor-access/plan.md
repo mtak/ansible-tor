@@ -6,7 +6,7 @@
 
 ## Summary
 
-Restrict Tor's control interface to authenticated local clients and restrict the native metrics listener to the Prometheus scraper sources. Preserve the Tor exporter running as `debian-tor`, root-operated Nyx, and the current firewall access needed by monitoring. Use Tor cookie authentication for local control clients, make the Tor metrics policy agree with the deployment allowlist, and document the effective access policy and verification steps.
+Restrict Tor's control interface to authenticated local clients and restrict the native metrics listener to the existing `control_ip` allowlist. Preserve the Tor exporter running as `debian-tor` and root-operated Nyx. Use Tor cookie authentication for local control clients, align Tor's native metrics policy with the existing source allowlist and firewall, leave the Prometheus-to-exporter HTTP path unchanged, and document the effective policy.
 
 ## Technical Context
 
@@ -67,15 +67,15 @@ ANSIBLE_RUNBOOK.md              # Deployment and access verification guidance
 
 ## Design Decisions
 
-- Use a loopback-only Tor control listener with Tor cookie authentication, and verify the clients negotiate SAFECOOKIE. The exporter runs as `debian-tor`, while Nyx is configured for root; verify both clients can read/use Tor's cookie before rollout.
-- Give native Tor MetricsPort a specific allow policy for Prometheus scraper sources and keep the host firewall allowlist consistent. The repository currently permits the configured `control_ipv4` and `control_ipv6` sources through the firewall, but it does not identify which of those are the scraper. Confirm and document that mapping before applying the policy; do not invent new source addresses.
+- Use a loopback-only Tor control listener with Tor cookie authentication and verify the exporter negotiates SAFECOOKIE. The exporter runs as `debian-tor`; Nyx is configured for root, and its runtime check will be performed by the operator separately.
+- Give native Tor MetricsPort an explicit allow policy using the existing `control_ip` source set. The firewall already restricts inbound ports 9098 and 9099 to this set, so no change to the Prometheus-to-exporter HTTP path or firewall source list is required.
 - Keep the native Tor MetricsPort distinct from the exporter HTTP endpoint. Validate the former at port 9098 and the exporter endpoint at port 9099 so a passing exporter check cannot mask a blocked Tor metrics listener.
 - Apply consistent behavior to both relay and exit torrc templates. Preserve local control and metrics access after service restart.
 
 ## Risks and Mitigations
 
-- **Scraper addresses are not explicitly named in inventory**: Existing firewall variables are named `control_ipv4`/`control_ipv6` and shared with other administrative ports. Confirm which permitted addresses scrape port 9098 and record that mapping before rollout; keep unrelated admin sources out of the Tor metrics policy if they do not scrape it.
-- **Cookie access breaks one local client**: Check exporter as `debian-tor` and Nyx as root after configuration; correct only the required local cookie access while preserving filesystem protection.
+- **The allowlist is shared with administration**: `control_ip` also permits other operational traffic. Keep Tor's native MetricsPort policy at the same existing allowlist for this change, and don't expand that list.
+- **Cookie access breaks one local client**: Check exporter as `debian-tor` after configuration; the operator will separately validate Nyx as root. Correct only the required local cookie access while preserving filesystem protection.
 - **Metrics restriction blocks monitoring**: Validate the native Tor metrics port and exporter endpoint from the authorized scraper and verify an outside source is denied before considering deployment complete.
 - **IPv4/IPv6 policy mismatch**: Inspect both rendered firewall families and each Tor listener/policy for the configured address families.
 
@@ -84,6 +84,6 @@ ANSIBLE_RUNBOOK.md              # Deployment and access verification guidance
 - **Service boundaries**: Pass. The design assigns each setting to its current owning role and calls out the single policy boundary that must remain consistent between Tor and iptables.
 - **Reproducibility, Tor guidance, privacy, and operational simplicity**: Pass. The plan introduces no new service, preserves the encrypted/reprovisionable node model, follows Tor control/metrics guidance, and adds no user data collection.
 
-## Open Deployment Prerequisite
+## Deployment Scope
 
-The actual Prometheus scraper source address(es) cannot be identified from this repository alone. The existing firewall allowlist is the available source of permitted addresses, but is also used for other administration. Before implementation is deployed, confirm which of those addresses scrape the native Tor metrics endpoint and use/document that exact set. This does not block design or plan generation.
+Use the existing `control_ip` source allowlist for Tor's native MetricsPort policy. Keep the existing firewall rules for 9098 and 9099 and the Prometheus-to-exporter endpoint unchanged. Nyx remains an authorized local client; its runtime validation is handled by the operator outside the task checklist.
