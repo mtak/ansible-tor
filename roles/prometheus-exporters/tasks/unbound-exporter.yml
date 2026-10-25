@@ -2,7 +2,7 @@
 
 - name: Install unbound-exporter
   apt:
-    deb: https://github.com/letsencrypt/unbound_exporter/releases/download/v0.4.1/unbound_exporter-v0.4.1.x86_64.deb
+    deb: https://github.com/letsencrypt/unbound_exporter/releases/download/v0.6.0/unbound_exporter-v0.6.0.x86_64.deb
     state: present
 
 - name: Change service parameters
