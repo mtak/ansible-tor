@@ -99,3 +99,21 @@ a repository-scoped signing key. The relay and exit roles manage the actual
 A successful SSH or raw check does not mean Ansible modules or the full playbook
 will run successfully. Review the target list and expected changes, then run a
 playbook only as an explicitly planned deployment.
+
+## Tor Control and Metrics Access
+
+Tor's control interface listens only on `127.0.0.1:9051` and requires cookie
+authentication. The local Tor exporter connects to that interface as
+`debian-tor` and authenticates with SAFECOOKIE. Nyx is an operator interface
+used locally as root.
+
+Tor's native Prometheus metrics listener uses port `9098` and binds to the node's
+primary IPv4 address. Its access policy and the host firewall use the same source
+allowlist. The current values in `group_vars/all/external` are:
+
+- IPv4 (`control_ipv4`): `82.170.63.141`, `141.144.203.6`, `84.235.164.75`
+- IPv6 (`control_ipv6`): `2a02:a469:cb84::/64`
+
+Only those sources are accepted by Tor's metrics policy. The existing firewall
+also restricts port `9098` to that source set. The exporter HTTP endpoint on
+port `9099` remains a separate path and its firewall rule is unchanged.
