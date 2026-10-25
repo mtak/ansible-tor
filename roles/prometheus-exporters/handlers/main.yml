@@ -4,6 +4,7 @@
   systemd:
     name: prometheus-node-exporter
     state: restarted
+    daemon_reload: yes
 
 - name: restart_tor_exporter
   systemd:

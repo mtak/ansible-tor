@@ -5,6 +5,47 @@
     name: prometheus-node-exporter
     state: latest
 
+- name: Download upstream node-exporter 1.12.1
+  get_url:
+    url: https://github.com/prometheus/node_exporter/releases/download/v1.12.1/node_exporter-1.12.1.linux-amd64.tar.gz
+    dest: /var/tmp/node_exporter-1.12.1.linux-amd64.tar.gz
+    checksum: sha256:b51d8a76aa2a9156a55d501aca6276fae09e262259a5e4e831d2c2222f084e63
+    mode: 0644
+
+- name: Extract upstream node-exporter
+  unarchive:
+    src: /var/tmp/node_exporter-1.12.1.linux-amd64.tar.gz
+    dest: /var/tmp
+    remote_src: yes
+    creates: /var/tmp/node_exporter-1.12.1.linux-amd64/node_exporter
+
+- name: Install upstream node-exporter binary
+  copy:
+    src: /var/tmp/node_exporter-1.12.1.linux-amd64/node_exporter
+    dest: /usr/local/bin/node_exporter
+    remote_src: yes
+    owner: root
+    group: root
+    mode: 0755
+  notify: restart_node_exporter
+
+- name: Create node-exporter systemd override directory
+  file:
+    path: /etc/systemd/system/prometheus-node-exporter.service.d
+    state: directory
+    owner: root
+    group: root
+    mode: 0755
+
+- name: Use upstream node-exporter binary
+  template:
+    src: prometheus-node-exporter.service.override
+    dest: /etc/systemd/system/prometheus-node-exporter.service.d/override.conf
+    owner: root
+    group: root
+    mode: 0644
+  notify: restart_node_exporter
+
 - name: Set node-exporter configuration
   template:
     src: prometheus-node-exporter
