@@ -20,11 +20,18 @@ DirCache    1
 ExitRelay   0
 SocksPort   0
 Log notice  syslog
-MetricsPort {{ tor_metrics_port }} prometheus
-MetricsPortPolicy accept *
+MetricsPort {{ ansible_default_ipv4.address }}:{{ tor_metrics_port }} prometheus
+{% for source in control_ipv4.split(',') %}
+MetricsPortPolicy accept {{ source | trim }}
+{% endfor %}
+{% for source in control_ipv6.split(',') %}
+{% set network = source | trim %}
+MetricsPortPolicy accept6 [{{ network.split('/')[0] }}]/{{ network.split('/')[1] }}
+{% endfor %}
+MetricsPortPolicy reject *
 
-ControlPort 9051
-#CookieAuthentication 1
+ControlPort 127.0.0.1:9051
+CookieAuthentication 1
 
 # We are not an Exit node
 ExitPolicy reject *:*
