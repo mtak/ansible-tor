@@ -117,3 +117,30 @@ allowlist. The current values in `group_vars/all/external` are:
 Only those sources are accepted by Tor's metrics policy. The existing firewall
 also restricts port `9098` to that source set. The exporter HTTP endpoint on
 port `9099` remains a separate path and its firewall rule is unchanged.
+
+## Unbound Resolver Policy and Exit DNS Alerts
+
+The Unbound role installs a node-local resolver policy at
+`/etc/unbound/unbound.conf.d/resolver-policy.conf`. The policy binds recursive DNS
+to loopback, enables DNSSEC validation and QNAME minimization, and leaves outbound
+source selection to the operating system. Validate the rendered configuration with
+`unbound-checkconf` before restarting Unbound. The Unbound package task refreshes
+apt metadata when it is older than one hour before selecting the latest available
+package.
+
+The repository-managed Prometheus rules are in
+`monitoring/prometheus/tor-exit-dns.rules.yml`. The repository does not manage the
+external Prometheus scrape configuration, rule-import path, or notification
+receiver. Before importing, the monitoring owner must confirm the target selector
+for the active exit (`tor03.mtak.nl`) and the rule import path. The current rule
+assumes `instance="tor03.mtak.nl:9167"`; change it to match the actual scrape
+labels if needed. Its initial SERVFAIL threshold of `0.1` responses/second is
+provisional because no baseline series is stored in this repository. Review it
+against observed aggregate metrics before enabling notifications.
+
+Validate the rule file with the external Prometheus rule checker and the service's
+existing notification path. A sustained SERVFAIL rate above threshold fires after
+one hour; the first healthy evaluation resolves it. Missing or unavailable
+`unbound_up` telemetry produces a separate monitoring alert. SERVFAIL is a broad
+resolver failure signal and does not prove an upstream timeout. Check Unbound
+health, DNSSEC validation, upstream reachability, and the node route as appropriate.

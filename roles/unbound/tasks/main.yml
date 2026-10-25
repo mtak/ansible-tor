@@ -4,12 +4,24 @@
   apt:
     name: unbound
     state: latest
+    update_cache: yes
+    cache_valid_time: 3600
 
 - name: Set resolv.conf
   copy:
     src: resolv.conf
     dest: /etc/resolv.conf
     mode: 0444
+
+- name: Configure node-local resolver policy
+  template:
+    src: resolver-policy.conf
+    dest: /etc/unbound/unbound.conf.d/resolver-policy.conf
+    owner: root
+    group: root
+    mode: 0644
+    validate: unbound-checkconf %s
+  notify: restart_unbound
 
 - name: Copy unbound-control-setup
   copy:
@@ -60,4 +72,3 @@
     name: unbound
     state: started
     enabled: yes
-

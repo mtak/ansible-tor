@@ -1,0 +1,38 @@
+---
+groups:
+  - name: tor-exit-dns
+    rules:
+      # Initial value pending review against the external service baseline.
+      - alert: TorExitUnboundServfailRateHigh
+        expr: >-
+          rate(unbound_answer_rcodes_total{rcode="SERVFAIL",
+          instance="tor03.mtak.nl:9167"}[5m]) > 0.1
+        for: 1h
+        labels:
+          severity: warning
+          signal: unbound_servfail_rate
+        annotations:
+          summary: >-
+            High DNS SERVFAIL rate on {{ $labels.instance }}
+          description: >-
+            Unbound has returned SERVFAIL at {{ $value }} responses per second
+            for at least one hour (threshold: 0.1/s). This is a resolver
+            failure signal and does not identify a unique cause. Check Unbound
+            health, DNSSEC validation, upstream reachability, and the node
+            route.
+
+      - alert: TorExitUnboundExporterUnavailable
+        expr: >-
+          unbound_up{instance="tor03.mtak.nl:9167"} == 0 or
+          absent(unbound_up{instance="tor03.mtak.nl:9167"})
+        for: 0m
+        labels:
+          severity: warning
+          signal: unbound_exporter_unavailable
+        annotations:
+          summary: >-
+            Unbound exporter unavailable on tor03.mtak.nl
+          description: >-
+            Prometheus cannot obtain Unbound statistics for tor03.mtak.nl.
+            Resolver health is unknown. Check the exporter service, its
+            Unbound control connection, and the scrape target.
