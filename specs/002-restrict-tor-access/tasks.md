@@ -38,7 +38,7 @@ No shared foundational changes are required. User Story 1 can proceed independen
 
 ### Implementation and Acceptance Checks for User Story 1
 
-- [ ] T001 [US1] Set the control listener to loopback and enable cookie authentication in `roles/tor-relay/templates/torrc` and `roles/tor-exit/templates/torrc`.
+- [X] T001 [US1] Set the control listener to loopback and enable cookie authentication in `roles/tor-relay/templates/torrc` and `roles/tor-exit/templates/torrc`.
 - [ ] T002 [US1] Verify a remote connection to ControlPort is denied, an unauthenticated local control command is rejected, and the exporter running as `debian-tor` negotiates SAFECOOKIE; follow `specs/002-restrict-tor-access/quickstart.md` and review `roles/prometheus-exporters/templates/prometheus-tor-exporter` for its local connection settings.
 
 **Checkpoint**: The exporter retains authenticated local control access, remote and unauthenticated control access is denied, and the operator validates Nyx separately.
@@ -53,11 +53,11 @@ No shared foundational changes are required. User Story 1 can proceed independen
 
 ### Implementation and Acceptance Checks for User Story 2
 
-- [ ] T003 [P] [US2] Bind native MetricsPort to the node address(es) reached by Prometheus and replace `MetricsPortPolicy accept *` with the existing `control_ip` source policy, covering both `control_ipv4` and `control_ipv6` sources used by the firewall, in `roles/tor-relay/templates/torrc`.
-- [ ] T004 [P] [US2] Apply the same MetricsPort binding and `control_ip` source policy for both address families as the relay in `roles/tor-exit/templates/torrc`.
+- [X] T003 [P] [US2] Bind native MetricsPort to the node address(es) reached by Prometheus and replace `MetricsPortPolicy accept *` with the existing `control_ip` source policy, covering both `control_ipv4` and `control_ipv6` sources used by the firewall, in `roles/tor-relay/templates/torrc`.
+- [X] T004 [P] [US2] Apply the same MetricsPort binding and `control_ip` source policy for both address families as the relay in `roles/tor-exit/templates/torrc`.
 - [ ] T005 [US2] Verify port 9098 accepts a request from a source in `control_ip` and denies a source outside it; confirm the existing exporter endpoint on port 9099 remains unchanged using `specs/002-restrict-tor-access/quickstart.md`.
 
-**Checkpoint**: Confirmed scraper sources can retrieve metrics; other sources cannot; both Tor node roles behave consistently.
+**Checkpoint**: Tor templates now limit the metrics listener to the configured source set in both node roles. Runtime allow/deny checks remain in T005.
 
 ---
 
@@ -69,7 +69,7 @@ No shared foundational changes are required. User Story 1 can proceed independen
 
 ### Implementation for User Story 3
 
-- [ ] T006 [US3] Document the local control boundary, exporter SAFECOOKIE authentication, native metrics listener, and unchanged exporter HTTP endpoint in `ANSIBLE_RUNBOOK.md`; list the effective IPv4 and IPv6 source addresses from the `control_ipv4` and `control_ipv6` variable values in `group_vars/all/external`, and align `specs/002-restrict-tor-access/quickstart.md` with this policy.
+- [X] T006 [US3] Document the local control boundary, exporter SAFECOOKIE authentication, native metrics listener, and unchanged exporter HTTP endpoint in `ANSIBLE_RUNBOOK.md`; list the effective IPv4 and IPv6 source addresses from the `control_ipv4` and `control_ipv6` variable values in `group_vars/all/external`, and align `specs/002-restrict-tor-access/quickstart.md` with this policy.
 
 **Checkpoint**: The runbook and quickstart describe the same policy that is enforced by Tor and the firewall.
 
@@ -79,8 +79,9 @@ No shared foundational changes are required. User Story 1 can proceed independen
 
 **Purpose**: Check consistency across roles, address families, and acceptance outcomes.
 
-- [ ] T007 Review the rendered relay and exit Tor configurations and existing IPv4/IPv6 firewall rules against `group_vars/all/external`, `ANSIBLE_RUNBOOK.md`, and `specs/002-restrict-tor-access/quickstart.md`; confirm ControlPort is local/authenticated, MetricsPort uses `control_ip`, and port 9099 policy is unchanged.
-- [ ] T008 Run `ansible-playbook --syntax-check -i inventory playbook.yml` and complete the service restart, exporter, authorized metrics, and unauthorized-source checks in `specs/002-restrict-tor-access/quickstart.md`.
+- [X] T007 Review locally rendered relay and exit Tor configurations and existing IPv4/IPv6 firewall rules against `group_vars/all/external`, `ANSIBLE_RUNBOOK.md`, and `specs/002-restrict-tor-access/quickstart.md`; confirm ControlPort is local/authenticated, MetricsPort uses `control_ip`, and port 9099 policy is unchanged.
+- [X] T008 Run `ansible-playbook --syntax-check -i inventory playbook.yml`.
+- [ ] T009 After a planned deployment, complete the remote control denial, exporter authentication, authorized/unauthorized metrics, and post-restart recovery checks in `specs/002-restrict-tor-access/quickstart.md`.
 
 ---
 
@@ -93,7 +94,7 @@ No shared foundational changes are required. User Story 1 can proceed independen
 - **User Story 1 (Phase 3)**: Can start immediately.
 - **User Story 2 (Phase 4)**: T003-T004 use the existing source list and follow T001 because they edit the same Tor configuration files; T005 follows those changes.
 - **User Story 3 (Phase 5)**: T006 follows the final access policy decisions from User Stories 1 and 2.
-- **Polish (Phase 6)**: T007 and T008 follow implementation and documentation work.
+- **Polish (Phase 6)**: T007-T008 follow implementation and documentation work. T009 requires an actual deployment.
 
 ### User Story Dependencies
 
@@ -130,3 +131,4 @@ Complete T001-T002 to secure remote control access while preserving local Nyx an
 - `[P]` marks only tasks that can proceed independently after their stated prerequisites.
 - Manual service and network checks are required by the feature acceptance criteria; no automated tests are added.
 - The operator will verify Nyx access separately; the task checklist does not prescribe Nyx checks.
+- T009 is intentionally pending until the change is deployed to managed nodes.

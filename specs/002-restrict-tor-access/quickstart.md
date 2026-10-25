@@ -10,12 +10,12 @@ This guide is for validating an implementation after it has been reviewed and de
 
 ## Validation scenarios
 
-1. **Configuration review**: Inspect the rendered Tor configuration and both IPv4 and IPv6 firewall rules on each node. Confirm ControlPort is local only and authenticated, MetricsPort uses `control_ip`, and no broad `accept *` metrics policy remains.
+1. **Configuration review**: Inspect the rendered Tor configuration and both IPv4 and IPv6 firewall rules on each node. Confirm ControlPort is `127.0.0.1:9051` with cookie authentication, MetricsPort binds to the node's primary IPv4 address, the policy uses the `control_ipv4` and `control_ipv6` values, and no broad `accept *` metrics policy remains.
 2. **Control denial**: From a remote source, attempt to connect to ControlPort and confirm it is unreachable. From the node, attempt a control command without authenticating and confirm Tor rejects it.
 3. **Exporter control access**: Check that `prometheus-tor-exporter` is active and can reconnect as `debian-tor` to the local Tor control interface using SAFECOOKIE. Leave its existing HTTP metrics endpoint on port 9099 and firewall access unchanged.
 4. **Native metrics allowlist**: Request the Tor metrics endpoint on port 9098 from a source in `control_ip` and confirm a successful metrics response. Repeat from a source outside the allowlist and confirm the request is denied.
 5. **Service recovery**: After a planned Tor restart, repeat the exporter and authorized metrics checks and confirm collection resumes without a policy change.
-6. **Policy documentation**: Confirm the runbook names the local control boundary, authentication, native metrics port, and `control_ip` source set.
+6. **Policy documentation**: Confirm the runbook names the local control boundary, authentication, native metrics port, and effective IPv4/IPv6 source addresses from the `control_ip` variables.
 
 ## Expected result
 
