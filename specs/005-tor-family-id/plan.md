@@ -14,7 +14,7 @@ Configure every active managed Tor relay as a member of one FamilyID family. Kee
 
 **Primary Dependencies**: Ansible built-in modules and lookups, Tor Project packages, optional `run_ansible.sh` Docker wrapper, `sha256sum` or Ansible checksum support, Tor Metrics Onionoo for external publication checks.
 
-**Storage**: One Tor-generated binary family key in a persistent controller file outside Git and copied to each relay's Tor key directory; public FamilyID and expected key digest in shared managed variables. The operator stores the original key in a password manager.
+**Storage**: One Tor-generated binary family key in a persistent controller file outside Git and copied to each relay's Tor key directory; public FamilyID and expected key digest in shared managed variables. The operator stores the key's base64 encoding in a password manager and keeps the decoded binary file on the controller.
 
 **Testing**: Static syntax and inventory checks; controller input preflight including checksum; non-production missing/wrong-key checks; Tor option and configuration validation; live published `family_cert` and `family_ids` checks after an approved deployment.
 

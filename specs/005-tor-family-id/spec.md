@@ -6,7 +6,7 @@
 
 **Status**: Draft
 
-**Input**: Resolve issues #8 and #18 by declaring all active Tor relays managed by this project as one operator family. Today these are tor01, tor02, and tor03; future active relays join the same family. Use the supported FamilyID mechanism, deploy from a reusable local family key outside Git, remove obsolete MyFamily configuration, verify publication, and document membership maintenance. The operator stores the original key in a password manager without unlocking it for routine deployments.
+**Input**: Resolve issues #8 and #18 by declaring all active Tor relays managed by this project as one operator family. Today these are tor01, tor02, and tor03; future active relays join the same family. Use the supported FamilyID mechanism, deploy from a reusable local family key outside Git, remove obsolete MyFamily configuration, verify publication, and document membership maintenance. The operator stores the key as base64 text in a password manager without unlocking it for routine deployments.
 
 ## User Scenarios & Testing *(mandatory)*
 
@@ -79,7 +79,7 @@ As a relay operator, I want routine deployments to use an available local key so
 
 - **Active relay**: A Tor relay currently managed for operation by this project; has a unique relay identity and one operator family membership.
 - **Operator family**: The set of all active relays controlled by this operator; identified publicly by one shared family identifier.
-- **Family secret**: Private material shared by active members to prove family membership; the operator supplies a persistent local deployment copy from a key stored in their password manager.
+- **Family secret**: Private material shared by active members to prove family membership; the operator supplies a persistent decoded binary deployment copy while storing its base64 representation in their password manager.
 - **Published membership**: Network-visible proof that a relay belongs to the operator family, used to verify that clients can recognize the relationship.
 
 ## Success Criteria *(mandatory)*
@@ -95,7 +95,7 @@ As a relay operator, I want routine deployments to use an available local key so
 ## Assumptions
 
 - The active family consists of tor01, tor02, and tor03 now; every future active Tor relay managed by this project belongs to the same operator family. Decommissioned hosts are not active members.
-- The operator stores the family key in a password manager and keeps a persistent local secret file outside Git for routine deployments. The local file is available on the deployment controller during routine runs.
+- The operator stores the family key as base64 text in a password manager and keeps a persistent decoded binary secret file outside Git for routine deployments. The local file is available on the deployment controller during routine runs.
 - The current supported Tor family mechanism is FamilyID. The exact version and publication behavior are verified during planning and again before deployment.
 - The existing project constitution allows changes to be applied to all targeted nodes together; a one-node-at-a-time rollout is not required.
 - This feature covers relay family membership and key handling for that membership. It does not change relay identity keys, exit policy, or unrelated Tor settings.

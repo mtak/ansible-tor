@@ -4,14 +4,14 @@ This guide describes validation after the feature is implemented. It does not cr
 
 ## Prerequisites
 
-- An original Tor-generated `.secret_family_key` file from the operator's password manager, saved byte-for-byte outside this repository and readable by the deploying account.
+- A decoded, byte-for-byte `.secret_family_key` file outside this repository, readable by the deploying account. The password manager stores the same secret as base64 text; base64 is not encryption.
 - The public FamilyID generated with that key and its SHA-256 digest recorded in shared Tor variables.
 - A supported Debian or Ubuntu LTS host and compatible remote Python/Ansible environment before a live playbook run. The [runbook](../../ANSIBLE_RUNBOOK.md) records that the current Debian 10/Python 3.7.3 baseline cannot run normal modules from ansible-core 2.21.4.
 - `curl` and `jq` for the external publication check. Public data may take time to update after a relay publishes a new descriptor.
 
 ## 1. Validate controller input and syntax
 
-From the repository root, set the path to the existing local file. An external `.env` may contain only this assignment; keep the binary key out of it.
+From the repository root, set the path to the existing decoded binary file. An external `.env` may contain only this assignment; keep both binary key bytes and their base64 representation out of it. Compute SHA-256 over the binary file, not the base64 text.
 
 ```sh
 export TOR_FAMILY_KEY_FILE="$HOME/.local/share/taktor/family.secret_family_key"

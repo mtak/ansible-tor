@@ -11,7 +11,7 @@
 
 ## 2. Key format and storage
 
-- **Decision**: Treat the Tor-generated family secret as a binary file. The operator retains it in a password manager and keeps a byte-for-byte local file outside Git for routine deployments. Copy it into each relay's key directory under a name ending `.secret_family_key`, owned by the Tor service account with restricted permissions. Store the generated public FamilyID as non-secret shared configuration.
+- **Decision**: Treat the Tor-generated family secret as a binary file. The operator stores its base64 encoding as a password-manager secret and keeps a decoded, byte-for-byte local file outside Git for routine deployments. Base64 changes only the representation, not the secrecy requirement. Copy it into each relay's key directory under a name ending `.secret_family_key`, owned by the Tor service account with restricted permissions. Store the generated public FamilyID as non-secret shared configuration.
 - **Rationale**: `tor --keygen-family <basename>` produces the secret file and companion public identifier. Tor uses the secret to sign family certificates. A raw secret in `.env`, a template, or inventory risks corrupting binary bytes or revealing them. The live default `/var/lib/tor/keys` is owned by `debian-tor` with restricted directory permissions.
 - **Alternatives considered**: Put secret bytes in `.env` (binary and disclosure problems); require unlocking an encrypted vault on each run (operator declined); manually copy keys to relays (breaks reproducibility).
 - **Sources**: [Tor family setup](https://community.torproject.org/relay/setup/post-install/family-ids/), [Tor 0.4.9.16 source](https://dist.torproject.org/tor-0.4.9.16.tar.gz), read-only live directory metadata.
@@ -39,4 +39,4 @@
 
 ## Open Clarifications
 
-None for planning. The operator supplies the original key from the password manager and a persistent local copy before deployment. This feature does not define or test recovery or rotation procedures.
+None for planning. The operator supplies a persistent decoded local copy; the password manager stores its base64 representation. This feature does not define or test recovery or rotation procedures.

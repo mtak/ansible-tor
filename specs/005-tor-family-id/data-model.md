@@ -14,7 +14,7 @@ The single family shared by all active relays. Fields: public FamilyID, expected
 
 ## Family secret
 
-The private Tor-generated binary key. Fields: controller file path, expected digest, target key filename, target owner, and target access mode. The secret's content is never an inventory value or log field. The operator supplies a persistent local copy sourced from their password manager.
+The private Tor-generated binary key. Fields: controller file path, expected digest, target key filename, target owner, and target access mode. The secret's content is never an inventory value or log field. The operator keeps a persistent decoded local copy; the password manager stores the same bytes encoded as base64 text.
 
 **Validation**: Before relay family changes, the controller file exists, is readable, and matches the expected digest. The copied key on a relay must be byte-for-byte identical and readable by Tor while inaccessible to ordinary users.
 

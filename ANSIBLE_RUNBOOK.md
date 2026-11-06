@@ -123,13 +123,23 @@ port `9099` remains a separate path and its firewall rule is unchanged.
 Every active Tor relay in `inventory` belongs to the same operator family.
 Currently the active members are tor01, tor02, and tor03. The shared public
 `tor_family_id` and expected secret-file digest are in `group_vars/all/tor`.
-The binary `.secret_family_key` file stays outside this repository. Keep its
-original in the operator's password manager and a byte-for-byte local copy
-available for routine deployments.
+The binary `.secret_family_key` file stays outside this repository. Store its
+base64-encoded bytes as a secret in the password manager, and keep a decoded,
+byte-for-byte local copy available for routine deployments. Base64 is only an
+encoding; treat that text as the secret key. To copy the generated key into the
+password manager, run `base64 -w 0` on the binary file and save the resulting
+text there. For the standard local path:
 
-Set `TOR_FAMILY_KEY_FILE` to the local file's absolute path. An external
-`.env` file may contain that path assignment, but it must not contain key
-bytes. The wrapper does not load `.env` automatically. The controller checks
+```sh
+base64 -w 0 "$HOME/.local/share/taktor/family.secret_family_key"
+printf '\n'
+sha256sum "$HOME/.local/share/taktor/family.secret_family_key"
+```
+
+The base64 output is secret. Compute the pinned SHA-256 from the binary file,
+not its base64 text. Set `TOR_FAMILY_KEY_FILE` to the local file's absolute
+path. An external `.env` file may contain that path assignment, but it must
+not contain binary or base64 key bytes. The wrapper does not load `.env` automatically. The controller checks
 the file and its SHA-256 digest before the Tor roles run. `run_ansible.sh`
 mounts the file read-only into its Docker container; native Ansible reads the
 same environment variable directly. For example:

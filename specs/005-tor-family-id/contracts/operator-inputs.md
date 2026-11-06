@@ -6,7 +6,7 @@ This is the operator-facing deployment contract for the approved local-key workf
 
 | Input | Location | Contract |
 | --- | --- | --- |
-| Family secret | `TOR_FAMILY_KEY_FILE` environment variable | Absolute path to the original Tor-generated binary `.secret_family_key` file on the controller. The file is outside Git and readable by the deploying account. An external `.env` file may set this path, but must not contain the secret bytes. |
+| Family secret | `TOR_FAMILY_KEY_FILE` environment variable | Absolute path to the decoded Tor-generated binary `.secret_family_key` file on the controller. The file is outside Git and readable by the deploying account. The password manager holds its base64 text; an external `.env` may set only the file path, not the binary or base64 secret. |
 | Public FamilyID | Shared Tor variable | Exact value generated with the same key; one value for all active relays. It is non-secret. |
 | Expected key digest | Shared Tor variable | SHA-256 of the original secret file, pinned when the public ID is recorded. It is non-secret and rejects a substituted controller file. |
 | Active members | `inventory` | Union of active relay and exit groups. Retired or commented hosts are excluded. |
