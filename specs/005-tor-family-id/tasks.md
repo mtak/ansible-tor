@@ -18,7 +18,7 @@
 
 **Purpose**: Establish the non-secret family metadata paired with the operator's existing Tor-generated binary key.
 
-- [ ] T001 Record the public FamilyID from the key's companion `.public_family_id` and the secret file's SHA-256 digest in `group_vars/all/tor`; require one present Tor-syntax public ID and a 64-character hexadecimal digest, and keep the binary key outside Git.
+- [X] T001 Record the public FamilyID from the key's companion `.public_family_id` and the secret file's SHA-256 digest in `group_vars/all/tor`; require one present Tor-syntax public ID and a 64-character hexadecimal digest, and keep the binary key outside Git.
 
 **Checkpoint**: One public ID and pinned digest represent the single operator family; no secret bytes are committed.
 
