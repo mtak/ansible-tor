@@ -43,3 +43,8 @@ tags
 
 # Ansible output
 cluster_state.json
+
+# Local operator input
+.env
+.env.*
+*.secret_family_key

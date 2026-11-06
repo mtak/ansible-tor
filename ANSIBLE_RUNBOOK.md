@@ -118,6 +118,43 @@ Only those sources are accepted by Tor's metrics policy. The existing firewall
 also restricts port `9098` to that source set. The exporter HTTP endpoint on
 port `9099` remains a separate path and its firewall rule is unchanged.
 
+## Tor Relay FamilyID
+
+Every active Tor relay in `inventory` belongs to the same operator family.
+Currently the active members are tor01, tor02, and tor03. The shared public
+`tor_family_id` and expected secret-file digest are in `group_vars/all/tor`.
+The binary `.secret_family_key` file stays outside this repository. Keep its
+original in the operator's password manager and a byte-for-byte local copy
+available for routine deployments.
+
+Set `TOR_FAMILY_KEY_FILE` to the local file's absolute path. An external
+`.env` file may contain that path assignment, but it must not contain key
+bytes. The wrapper does not load `.env` automatically. The controller checks
+the file and its SHA-256 digest before the Tor roles run. `run_ansible.sh`
+mounts the file read-only into its Docker container; native Ansible reads the
+same environment variable directly. For example:
+
+```sh
+export TOR_FAMILY_KEY_FILE="$HOME/.local/share/taktor/family.secret_family_key"
+ANSIBLE_LOCAL_TEMP=/tmp ansible-playbook -i inventory playbook.yml --syntax-check
+./run_ansible.sh -i inventory playbook.yml --tags tor
+```
+
+The public ID must come from the same Tor-generated key as the local file.
+Record the public `FamilyId` value and the file's SHA-256 digest in
+`group_vars/all/tor`; never commit the secret file. A missing or wrong local
+file stops the preflight. Do not run a live playbook until the supported OS and
+compatible Ansible/Python prerequisites above are met.
+
+To add a relay, add its hostname to the active `tor-relay` or `tor-exit`
+inventory group and provide its ordinary host variables. It receives the same
+family key and public ID without changing existing members' family settings.
+To retire a relay, remove it from the active inventory group. No fingerprint
+list needs maintenance on the remaining relays. After deployment, verify each
+active fingerprint's public `family_cert` and matching `family_ids` in fresh
+Tor network data; follow `specs/005-tor-family-id/quickstart.md` for the
+checks. A missing or stale public record remains pending.
+
 ## Unbound Resolver Policy and Exit DNS Alerts
 
 The Unbound role installs a node-local resolver policy at

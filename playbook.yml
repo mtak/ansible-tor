@@ -1,5 +1,54 @@
 ---
 
+- name: Validate Tor family deployment input
+  hosts: localhost
+  gather_facts: false
+  vars_files:
+    - group_vars/all/tor
+  vars:
+    ansible_remote_tmp: /tmp
+  tags: [tor]
+  tasks:
+    - name: Require active relays and public family metadata
+      ansible.builtin.assert:
+        that:
+          - groups['all-servers'] | default([]) | length > 0
+          - tor_family_id is match('^[A-Za-z0-9+/]{43}$')
+          - tor_family_key_sha256 is match('^[0-9a-f]{64}$')
+        fail_msg: >-
+          Configure one public tor_family_id and the matching 64-character
+          tor_family_key_sha256 for the active relay family.
+        quiet: true
+
+    - name: Require an absolute controller family key path
+      ansible.builtin.assert:
+        that:
+          - lookup('ansible.builtin.env', 'TOR_FAMILY_KEY_FILE') is match('^/')
+        fail_msg: >-
+          Set TOR_FAMILY_KEY_FILE to the absolute path of the Tor-generated
+          .secret_family_key file outside this repository.
+        quiet: true
+
+    - name: Inspect the local family key without displaying its contents
+      ansible.builtin.stat:
+        path: "{{ lookup('ansible.builtin.env', 'TOR_FAMILY_KEY_FILE') }}"
+        follow: true
+        get_checksum: true
+        checksum_algorithm: sha256
+      register: tor_family_local_key
+      no_log: true
+
+    - name: Require a readable family key matching the configured digest
+      ansible.builtin.assert:
+        that:
+          - tor_family_local_key.stat.isreg | default(false)
+          - tor_family_local_key.stat.readable | default(false)
+          - tor_family_local_key.stat.checksum | default('') == tor_family_key_sha256
+        fail_msg: >-
+          TOR_FAMILY_KEY_FILE must be a readable Tor family key file whose
+          SHA-256 matches tor_family_key_sha256.
+        quiet: true
+
 #- hosts: all-servers
 #  tasks:
 #    - name: debug

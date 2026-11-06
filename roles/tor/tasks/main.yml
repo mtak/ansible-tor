@@ -68,6 +68,29 @@
     state: latest
     update_cache: true
 
+- name: List supported Tor configuration options
+  ansible.builtin.command: tor --list-torrc-options
+  register: tor_supported_options
+  changed_when: false
+
+- name: Require FamilyId support before installing the family key
+  ansible.builtin.assert:
+    that:
+      - "'FamilyId' in tor_supported_options.stdout_lines"
+    fail_msg: The installed Tor version does not support FamilyId.
+    quiet: true
+
+- name: Install the shared Tor family key
+  ansible.builtin.copy:
+    src: "{{ lookup('ansible.builtin.env', 'TOR_FAMILY_KEY_FILE') }}"
+    dest: /var/lib/tor/keys/taktor.secret_family_key
+    owner: debian-tor
+    group: debian-tor
+    mode: '0600'
+  no_log: true
+  diff: false
+  notify: restart_tor_family_key
+
 - name: Create Nyx config dir
   file:
     path: /root/.nyx

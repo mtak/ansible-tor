@@ -1,0 +1,6 @@
+---
+
+- name: restart_tor_family_key
+  ansible.builtin.systemd:
+    name: tor@default
+    state: restarted
