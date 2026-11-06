@@ -20,6 +20,11 @@ tor_blocked_hosts:
 
 tor_metrics_port: 9098
 
+# Public values from the same Tor-generated family key. Keep the binary key
+# outside this repository and set TOR_FAMILY_KEY_FILE to its absolute path.
+tor_family_id: "ku5+Tm/sIKVcdQyUol12URn8Sk23Z5+5WJPVn6caRTY"
+tor_family_key_sha256: "e66de2ef06083c0e0e6726799ed31f24f44cc089a759571842a9fca86883fb8f"
+
 # If data is unlimited:
 tor_bandwidth: 600       # in Mbit/s
 tor_bandwidth_burst: 800 # in Mbit/s

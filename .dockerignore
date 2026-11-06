@@ -1,0 +1,5 @@
+.git/
+.env
+.env.*
+*.secret_family_key
+*.log*

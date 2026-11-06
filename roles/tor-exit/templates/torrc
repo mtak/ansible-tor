@@ -8,7 +8,7 @@
 {% endif %}
 Nickname    {{ tor_nick }}
 ContactInfo ContactInfo email:tak.tor.operator[]gmail.com url:https://tak.io/ keybase:mtak dnslocation:local dnsqname:y dnssec:y ciissversion:2
-MyFamily    {{ groups['all-servers'] | map('extract', hostvars, ['tor_fingerprint']) | join(',') }}
+FamilyId    {{ tor_family_id }}
 {% if ipv6_disabled|default(true) %}
 ORPort      443 IPv4Only
 {% else %}
