@@ -35,10 +35,10 @@ Expected: controller preflight passes; each target supports `FamilyId`; the same
 
 ## 3. Check public family publication
 
-Use the three current fingerprints from `host_vars` and substitute the public ID from shared Tor variables. The `ed25519:` prefix is the network-visible ID form. For each relay, inspect the exact fingerprint, `last_seen`, `family_cert`, and `family_ids` fields:
+Use the three current fingerprints from `host_vars` and substitute the public ID from shared Tor variables. Onionoo returns the bare ID in `family_ids`; Tor microdescriptors use the `ed25519:` prefix. Compare Onionoo values against the bare public ID. For each relay, inspect the exact fingerprint, `last_seen`, `family_cert`, and `family_ids` fields:
 
 ```sh
-expected_family_id='ed25519:<PUBLIC_FAMILY_ID>'
+expected_family_id='<PUBLIC_FAMILY_ID>'
 for fingerprint in \
   8696DC7AC0470F6ED5C7AC48030002D7D3716FC9 \
   69042D0DC33BD810BD08ADADBC7E95A3CABAEF64 \
@@ -52,6 +52,14 @@ done
 ```
 
 Mark a relay **verified** only when its fresh record has both booleans true. A missing or stale record is **pending**; a fresh record missing either value is **failed**. Recheck pending publication after directory propagation. All active relays must be verified before closing issues #8 and #18. For future relays, use their new fingerprints rather than extending a `MyFamily` list.
+
+**Publication verified 2026-11-06 at 14:35 UTC:** Onionoo reported a 13:00 UTC consensus, after the 11:28–11:30 UTC deployment. Each exact fingerprint was running and last seen at 13:00 UTC, had a `family_cert`, and listed the configured bare FamilyID `ku5+Tm/sIKVcdQyUol12URn8Sk23Z5+5WJPVn6caRTY` in `family_ids`.
+
+| Relay | Fingerprint | Status |
+| --- | --- | --- |
+| tor01 | `8696DC7AC0470F6ED5C7AC48030002D7D3716FC9` | Verified |
+| tor02 | `69042D0DC33BD810BD08ADADBC7E95A3CABAEF64` | Verified |
+| tor03 | `1D65771E68383F294D4F1131B19DF64989EEDF8A` | Verified |
 
 ## 4. Negative checks in a non-production environment
 
