@@ -51,7 +51,7 @@
 - [X] T007 [P] [US1] Replace the fingerprint-derived `MyFamily` line with the explicit shared `FamilyId` in `roles/tor-relay/templates/torrc`; render exactly one public ID and no reference to other relay fingerprints.
 - [X] T008 [P] [US1] Replace the fingerprint-derived `MyFamily` line with the same explicit shared `FamilyId` in `roles/tor-exit/templates/torrc`; render exactly one public ID and no reference to other relay fingerprints.
 - [X] T009 [US1] Validate `playbook.yml`, `roles/tor/tasks/main.yml`, and both `torrc` templates with syntax and non-production rendering checks from `specs/005-tor-family-id/quickstart.md`; confirm both templates use the same public ID and no `MyFamily`.
-- [ ] T010 [US1] After a separately authorized rollout on a compatible host baseline, use `specs/005-tor-family-id/quickstart.md` to check tor01, tor02, and tor03 by exact fingerprint and fresh `last_seen`; require each public record's `family_cert` and expected `family_ids`, and record pending or failed members without key output.
+- [X] T010 [US1] After a separately authorized rollout on a compatible host baseline, use `specs/005-tor-family-id/quickstart.md` to check tor01, tor02, and tor03 by exact fingerprint and fresh `last_seen`; require each public record's `family_cert` and expected `family_ids`, and record pending or failed members without key output.
 
 **Checkpoint**: Current active relays are verified as one family; if deployment is unavailable, retain T010 as pending rather than claiming publication.
 
@@ -136,3 +136,7 @@
 1. Add US2 documentation and temporary-inventory validation without editing existing members' family settings.
 2. Add US3 wrapper support for routine deployments from the local binary key.
 3. Complete T016–T017 for combined validation and review. No recovery or rotation work is in scope.
+
+## Phase 7: Convergence
+
+- [X] T018 Recheck tor01, tor02, and tor03 by exact fingerprint in fresh Onionoo records after publication catches up; record each relay as verified, pending, or failed from last_seen, family_cert, and the expected family_ids entry, and keep T010 open until every active relay is verified per FR-008 (partial).
